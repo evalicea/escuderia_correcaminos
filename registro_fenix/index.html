@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="carbon">
+  <title>App de Telemetría, Checklist y Pits — Escudería Correcaminos #137 (UPPE)</title>
+
+  <!-- Google Fonts: IBM Plex Sans & IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Chart.js Pinned CDN -->
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=C_Y8SqIylKRrhY2b6MPj_8pLW30DkG_n5WlJvjVAPhxWpIXhFID6531wfcjEbLXYbXD_TNw8w6qnTDwaxTLahjKPPjoIQDXYNWXu9qkCIoJK1_WyAuAQoeTflFbfbRC13_UJe9jO6Ceeyc4laCrTmTnC2LUI6XD-CTHRIdZv9f9qKWP7Jkpd0vA5gtvu7SbQ5mTyyR9fVEiqmU3ZKgV3yzqcwFy24BYcYKf_D1K8DV2AqOd0P9fRezf2M3YSivYGoB2BO1om_MFEsSRqGzi4m3Rxymwtq5jxXB27o6Wxpj3cVqXHGqh757aud0mMRiUO" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNncHViM1JsWW05dmEyeHRFa0FTQ1dGeWRHbG1ZV04wY3hvekNpUmpOV1psTkRNd1pTMDJNekV3TFRReVpqSXRPREE0WmkweU4yWmxOV0U1TjJSbU9XTVNDeElIRU9ieW9xZU1HeGdCJmZpbGVuYW1lPUVsZWN0cmF0b25fQW1lcmljYS5odG1sJm9waT05Njc5NzI0MiZhdXRodXNlcj0w"/><script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       CARBON DESIGN SYSTEM — TOKENS & THEMING
+       ========================================================================== */
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Light Mode) */
+      --background: #ffffff;
+      --surface-container-low: #f4f4f4;
+      --surface-container: #f4f4f4;
+      --surface-container-high: #e0e0e0;
+      --surface-container-highest: #d1d1d1;
+
+      /* Ink */
+      --on-surface: #161616;
+      --on-surface-variant: #525252;
+      --on-surface-muted: #8d8d8d;
+
+      /* Rules & Borders */
+      --outline: #8d8d8d;
+      --outline-variant: #e0e0e0;
+
+      /* Accents */
+      --primary: #0f62fe;
+      --on-primary: #ffffff;
+      --primary-container: #d0e2ff;
+      --on-primary-container: #161616;
+      --secondary: #6f6f6f;
+      --tertiary: #198038;
+      --on-tertiary: #ffffff;
+      --error: #da1e28;
+      --on-error: #ffffff;
+      --warning: #f1c21b;
+      --on-warning: #161616;
+      --positive: #198038;
+      --focus: #0f62fe;
+
+      /* Racing Accent Tokens */
+      --racing-orange: #ff832b;
+      --racing-amber: #f1c21b;
+      --racing-navy: #002d9c;
+
+      /* Data series */
+      --data-1: #0f62fe;
+      --data-2: #8a3ffc;
+      --data-3: #007d79;
+      --data-4: #ee538b;
+      --data-context: #8d8d8d;
+
+      /* Fonts */
+      --font-headline: 'IBM Plex Sans', sans-serif;
+      --font-body: 'IBM Plex Sans', sans-serif;
+      --font-label: 'IBM Plex Mono', monospace;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.25rem;
+      --rounded-full: 0.75rem;
+
+      /* Effects */
+      --shadow-1: 0 2px 6px rgb(0 0 0 / 0.1);
+      --shadow-2: 0 4px 12px rgb(0 0 0 / 0.15);
+      --rule: 1px solid var(--outline-variant);
+      --field-rule: 1px solid var(--outline);
+      --indicator: 2px solid var(--primary);
+
+      /* Spacing Scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+
+      /* Type Scale (Tool / Dashboard) */
+      --display-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+      --headline-size: clamp(1.2rem, 1.05rem + 0.4vw, 1.45rem);
+      --subhead-size: clamp(1rem, 0.95rem + 0.2vw, 1.15rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+    }
+
+    /* Dark Mode Theme Tokens */
+    [data-theme="dark"] {
+      color-scheme: dark;
+
+      --background: #161616;
+      --surface-container-low: #1f1f1f;
+      --surface-container: #262626;
+      --surface-container-high: #393939;
+      --surface-container-highest: #474747;
+
+      --on-surface: #f4f4f4;
+      --on-surface-variant: #c6c6c6;
+      --on-surface-muted: #8d8d8d;
+
+      --outline: #8d8d8d;
+      --outline-variant: #393939;
+
+      --primary: #78a9ff;
+      --on-primary: #161616;
+      --primary-container: #0043ce;
+      --on-primary-container: #f4f4f4;
+      --secondary: #a8a8a8;
+      --tertiary: #42be65;
+      --on-tertiary: #161616;
+      --error: #ff8389;
+      --on-error: #161616;
+      --warning: #f1c21b;
+      --on-warning: #161616;
+      --positive: #42be65;
+      --focus: #78a9ff;
+
+      --racing-orange: #ff832b;
+      --racing-amber: #f1c21b;
+      --racing-navy: #4589ff;
+
+      --data-1: #78a9ff;
+      --data-2: #be95ff;
+      --data-3: #08bdba;
+      --data-4: #ff7eb6;
+      --data-context: #6f6f6f;
+
+      --shadow-1: 0 2px 6px rgb(0 0 0 / 0.5);
+      --shadow-2: 0 4px 14px rgb(0 0 0 / 0.6);
+      --rule: 1px solid var(--outline-variant);
+      --field-rule: 1px solid var(--outline);
+      --indicator: 2px solid var(--primary);
+    }
+
+    /* Base Reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.5;
+      background-color: var(--background);
+      color: var(--on-surface);
+      transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+    }
+    header { position: static !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Focus visible standard */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Layout Container */
+    .app-wrapper {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    /* Top Masthead & Paddock Header */
+    .masthead {
+      border-bottom: 2px solid var(--on-surface);
+      padding-bottom: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-sm);
+    }
+
+    .logos-cluster {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .logo-frame {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      padding: var(--space-xs);
+      background-color: var(--surface-container);
+      border: var(--rule);
+    }
+
+    .logo-frame img, .logo-frame svg {
+      max-height: 44px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .team-badge-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .team-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .team-sub {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      background-color: var(--surface-container-high);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      border: var(--rule);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--tertiary);
+      display: inline-block;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      height: 40px;
+      padding: 0 var(--space-md);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+      border-radius: var(--rounded);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--on-primary);
+    }
+
+    .btn-primary:hover {
+      background-color: color-mix(in srgb, var(--primary), #000 20%);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--surface-container-high);
+    }
+
+    .btn-danger {
+      background-color: var(--error);
+      color: var(--on-error);
+    }
+
+    .btn-danger:hover {
+      background-color: color-mix(in srgb, var(--error), #000 20%);
+    }
+
+    .btn-success {
+      background-color: var(--tertiary);
+      color: var(--on-tertiary);
+    }
+
+    .btn-success:hover {
+      background-color: color-mix(in srgb, var(--tertiary), #000 20%);
+    }
+
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--on-surface);
+      border: var(--rule);
+    }
+
+    .btn-ghost:hover {
+      background-color: var(--surface-container-high);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Paddock Metadata Strip */
+    .paddock-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-sm);
+      padding: var(--space-xs) 0;
+    }
+
+    .paddock-item {
+      background-color: var(--surface-container);
+      padding: var(--space-xs) var(--space-sm);
+      border-left: 2px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .paddock-label {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .paddock-val {
+      font-family: var(--font-label);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+
+    /* Tab Navigation (Carbon Style) */
+    .nav-tabs {
+      display: flex;
+      border-bottom: var(--rule);
+      gap: var(--space-xs);
+      overflow-x: auto;
+      scrollbar-width: thin;
+      background-color: var(--background);
+    }
+
+    .tab-btn {
+      padding: var(--space-sm) var(--space-md);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .tab-btn:hover {
+      color: var(--on-surface);
+      background-color: var(--surface-container);
+    }
+
+    .tab-btn.is-active {
+      color: var(--primary);
+      font-weight: 700;
+      border-bottom: var(--indicator);
+      background-color: var(--surface-container-low);
+    }
+
+    /* Tab Content Sections */
+    .tab-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .tab-panel.is-active {
+      display: flex;
+    }
+
+    /* Grid Layouts */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 980px) {
+      .telemetry-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards & Tiles */
+    .card {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-xs);
+    }
+
+    .card-title {
+      font-family: var(--font-headline);
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Key Figure Metric Tiles */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .metric-tile {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-bottom: var(--indicator);
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-title {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      letter-spacing: 0.05em;
+    }
+
+    .metric-value {
+      font-family: var(--font-label);
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--on-surface);
+    }
+
+    .metric-unit {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--on-surface-muted);
+      margin-left: 2px;
+    }
+
+    .metric-foot {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Form Fields */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .field-label {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .field-input, .field-select {
+      height: 40px;
+      background-color: var(--background);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: 0 var(--space-sm);
+      font-family: var(--font-label);
+      font-size: 0.9375rem;
+      color: var(--on-surface);
+      width: 100%;
+    }
+
+    .field-input:focus, .field-select:focus {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }
+
+    .field-range {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .dual-input-row {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    /* Master Clock Box */
+    .clock-display {
+      background-color: var(--background);
+      border: 1px solid var(--outline);
+      padding: var(--space-sm);
+      text-align: center;
+      font-family: var(--font-label);
+      border-radius: var(--rounded);
+    }
+
+    .clock-digits {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+    }
+
+    .clock-sub {
+      font-size: 0.75rem;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+    }
+
+    /* Extraction Stopwatch Box */
+    .extraction-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      background-color: var(--surface-container-high);
+      border: 2px dashed var(--outline);
+      gap: var(--space-md);
+      text-align: center;
+    }
+
+    .stopwatch-digits {
+      font-family: var(--font-label);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+
+    .stopwatch-status-banner {
+      padding: var(--space-xs) var(--space-md);
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      border: var(--rule);
+      display: inline-block;
+    }
+
+    .status-pass {
+      background-color: color-mix(in srgb, var(--tertiary), transparent 85%);
+      color: var(--tertiary);
+      border-color: var(--tertiary);
+    }
+
+    .status-fail {
+      background-color: color-mix(in srgb, var(--error), transparent 85%);
+      color: var(--error);
+      border-color: var(--error);
+    }
+
+    .status-idle {
+      background-color: var(--surface-container);
+      color: var(--on-surface-variant);
+    }
+
+    /* Table Styles (Carbon Zebra) */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: var(--rule);
+      background-color: var(--background);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    thead th {
+      background-color: var(--surface-container-high);
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 2px solid var(--outline);
+      color: var(--on-surface);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule);
+      font-family: var(--font-label);
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: var(--surface-container-low);
+    }
+
+    tbody tr:hover {
+      background-color: var(--surface-container-high);
+    }
+
+    tr.best-lap-row {
+      background-color: color-mix(in srgb, var(--racing-amber), transparent 85%) !important;
+      border-left: 3px solid var(--racing-amber);
+    }
+
+    /* Chart Containers */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 640px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-box {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .chart-canvas-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 280px;
+      height: 300px;
+    }
+
+    /* Checklist & Accordions */
+    .checklist-progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: var(--surface-container-high);
+      overflow: hidden;
+    }
+
+    .checklist-progress-fill {
+      height: 100%;
+      background-color: var(--tertiary);
+      width: 0%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+
+    .check-list-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      background-color: var(--background);
+      border: var(--rule);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+
+    .check-item:hover {
+      background-color: var(--surface-container-high);
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .check-text-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .check-title {
+      font-weight: 600;
+      font-size: 0.9375rem;
+    }
+
+    .check-desc {
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+    }
+
+    .badge-tag {
+      display: inline-block;
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--rounded-full);
+      text-transform: uppercase;
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+
+    /* Custom SVGs and Icons */
+    .icon-svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .app-wrapper {
+        padding: var(--space-xs);
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .paddock-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+      .dual-input-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrapper">
+
+    <!-- ======================================================================
+         TOP MASTHEAD & LOGOS CLUSTER
+         ====================================================================== -->
+    <header class="masthead">
+      <div class="top-bar">
+        <!-- Brand & Team Logos -->
+        <div class="logos-cluster">
+          <!-- Logo 1: Escudería Correcaminos #137 (Dynamic Theme) -->
+          <div class="logo-frame" title="Escudería Correcaminos #137">
+            <img id="img-correcaminos" alt="Escudería Correcaminos #137">
+          </div>
+
+          <!-- Logo 2: Universidad Politécnica de Pénjamo (UPPE) -->
+          <div class="logo-frame" title="Universidad Politécnica de Pénjamo">
+            <img id="img-uppe" alt="Logo UPPE">
+          </div>
+
+          <!-- Logo 3: HYADI LAB (Patrocinador & Desarrollador) -->
+          <div class="logo-frame" title="HYADI LAB">
+            <img id="img-hyadi" alt="Logo HYADI LAB">
+          </div>
+
+          <div class="team-badge-group">
+            <h1 class="team-title">
+              CORRECAMINOS <span style="color: var(--primary);">#137</span>
+            </h1>
+            <div class="team-sub">
+              UPPE • Monoplaza Eléctrico "FENIX" • Electratón 2026
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls: Radio Status, Theme Toggle, Clear -->
+        <div class="header-controls">
+          <div class="status-pill" id="radio-indicator">
+            <span class="live-dot"></span> Telemetría Pits Radio: Activa
+          </div>
+
+          <!-- Theme Toggle -->
+          <button type="button" class="btn btn-ghost" id="theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema Claro / Oscuro">
+            <svg class="icon-svg" id="theme-icon" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span id="theme-btn-label">Modo Oscuro</span>
+          </button>
+
+          <!-- Export CSV -->
+          <button type="button" class="btn btn-secondary" onclick="exportTelemetryCSV()" title="Exportar datos a CSV">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Exportar CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Paddock Quick Metadata Bar -->
+      <div class="paddock-strip">
+        <div class="paddock-item">
+          <span class="paddock-label">Vehículo</span>
+          <span class="paddock-val">FENIX Monoplaza #137</span>
+        </div>
+        <div class="paddock-item">
+          <span class="paddock-label">Categoría</span>
+          <span class="paddock-val">Electratón Racer / America</span>
+        </div>
+        <div class="paddock-item">
+          <span class="paddock-label">Institución</span>
+          <span class="paddock-val">Univ. Politécnica de Pénjamo</span>
+        </div>
+        <div class="paddock-item">
+          <span class="paddock-label">Tecnología / Padrino</span>
+          <span class="paddock-val">HYADI LAB</span>
+        </div>
+        <div class="paddock-item">
+          <span class="paddock-label">Hora Local Pits</span>
+          <span class="paddock-val" id="live-paddock-clock">--:--:--</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         NAVIGATION TABS
+         ====================================================================== -->
+    <nav class="nav-tabs" role="tablist">
+      <button type="button" class="tab-btn is-active" id="tab-telemetry-btn" onclick="switchTab('telemetry')" role="tab">
+        1. Telemetría y Pits (En Vivo)
+      </button>
+      <button type="button" class="tab-btn" id="tab-safety-btn" onclick="switchTab('safety')" role="tab">
+        2. Checklist de Seguridad & Extracción (20s)
+      </button>
+      <button type="button" class="tab-btn" id="tab-inventory-btn" onclick="switchTab('inventory')" role="tab">
+        3. Inventario de Herramientas de Pits
+      </button>
+      <button type="button" class="tab-btn" id="tab-specs-btn" onclick="switchTab('specs')" role="tab">
+        4. Ficha Técnica y Reglamento 2026
+      </button>
+    </nav>
+
+    <!-- ======================================================================
+         TAB 1: TELEMETRÍA Y CRONOMETRAJE DE PITS
+         ====================================================================== -->
+    <main class="tab-panel is-active" id="panel-telemetry" role="tabpanel">
+
+      <!-- Headline Metric Tiles -->
+      <div class="metrics-row">
+        <div class="metric-tile">
+          <span class="metric-title">Vueltas Registradas</span>
+          <div class="metric-value" id="kpi-lap-count">0</div>
+          <span class="metric-foot" id="kpi-lap-foot">Objetivo: 60 min carrera</span>
+        </div>
+        <div class="metric-tile">
+          <span class="metric-title">Mejor Vuelta</span>
+          <div class="metric-value" id="kpi-best-lap">--:--.-</div>
+          <span class="metric-foot" id="kpi-best-lap-num">Vuelta: --</span>
+        </div>
+        <div class="metric-tile">
+          <span class="metric-title">Último Lap Split</span>
+          <div class="metric-value" id="kpi-last-lap">--:--.-</div>
+          <span class="metric-foot" id="kpi-last-lap-speed">-- km/h prom.</span>
+        </div>
+        <div class="metric-tile">
+          <span class="metric-title">Velocidad Promedio</span>
+          <div class="metric-value" id="kpi-avg-speed">0.0 <span class="metric-unit">km/h</span></div>
+          <span class="metric-foot" id="kpi-max-speed">Máx inst: 0 km/h</span>
+        </div>
+        <div class="metric-tile">
+          <span class="metric-title">Energía Acumulada</span>
+          <div class="metric-value" id="kpi-total-ah">0.00 <span class="metric-unit">Ah</span></div>
+          <span class="metric-foot" id="kpi-total-wh">0.0 Wh consumidos</span>
+        </div>
+        <div class="metric-tile">
+          <span class="metric-title">Distancia Recorrida</span>
+          <div class="metric-value" id="kpi-total-distance">0.00 <span class="metric-unit">km</span></div>
+          <span class="metric-foot">En pista actual</span>
+        </div>
+      </div>
+
+      <!-- Main Telemetry Grid: Controls Column + Charts/Table Column -->
+      <div class="telemetry-grid">
+
+        <!-- Column A: Race Clock & Lap Input Controls -->
+        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+
+          <!-- Race Master Clock Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Control de Carrera</h2>
+              <span class="badge-tag" id="race-status-tag">En Espera</span>
+            </div>
+
+            <div class="clock-display">
+              <div class="clock-digits" id="race-timer-display">00:00:00.0</div>
+              <div class="clock-sub" id="race-start-info">Inicio: No iniciado</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+              <button type="button" class="btn btn-primary" id="btn-race-toggle" onclick="toggleRaceClock()">
+                Iniciar Carrera
+              </button>
+              <button type="button" class="btn btn-ghost" id="btn-race-reset" onclick="resetRaceClock()">
+                Reiniciar Reloj
+              </button>
+            </div>
+          </div>
+
+          <!-- Radio Lap Capture Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Captura de Telemetría (Radio)</h2>
+              <span class="badge-tag" style="background-color: var(--surface-container-high);">Vuelta #<span id="next-lap-number">1</span></span>
+            </div>
+
+            <!-- Track Length Preset -->
+            <div class="field-group">
+              <label class="field-label" for="track-length-input">
+                Distancia por Vuelta (m)
+              </label>
+              <div style="display: grid; grid-template-columns: 1fr 110px; gap: var(--space-xs);">
+                <input type="number" id="track-length-input" class="field-input" value="1200" min="100" max="10000" step="10" oninput="updateLapCalculationsPreview()">
+                <select id="track-preset-select" class="field-select" onchange="applyTrackPreset(this.value)">
+                  <option value="1200">Toluca (1200m)</option>
+                  <option value="850">Pista Corta (850m)</option>
+                  <option value="1450">Querétaro (1450m)</option>
+                  <option value="1600">Monterrey (1600m)</option>
+                  <option value="1100">Cuautla (1100m)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Instantaneous Speed (km/h) with dual input -->
+            <div class="field-group">
+              <div class="field-label">
+                <span>Velocidad Instantánea (km/h)</span>
+                <span id="speed-display-badge" style="font-weight: 700; color: var(--primary);">45 km/h</span>
+              </div>
+              <div class="dual-input-row">
+                <input type="range" id="speed-slider" class="field-range" min="0" max="85" step="1" value="45" oninput="syncSpeedFromSlider(this.value)">
+                <input type="number" id="speed-input" class="field-input" min="0" max="120" step="0.5" value="45" oninput="syncSpeedFromNumber(this.value)">
+              </div>
+            </div>
+
+            <!-- Battery Pack Voltage (V) -->
+            <div class="field-group">
+              <div class="field-label">
+                <span>Voltaje de Banco (V)</span>
+                <span id="voltage-display-badge" style="font-weight: 700;">48.0 V</span>
+              </div>
+              <div class="dual-input-row">
+                <input type="range" id="voltage-slider" class="field-range" min="36" max="58" step="0.5" value="48.0" oninput="syncVoltageFromSlider(this.value)">
+                <input type="number" id="voltage-input" class="field-input" min="20" max="72" step="0.1" value="48.0" oninput="syncVoltageFromNumber(this.value)">
+              </div>
+            </div>
+
+            <!-- Current / Amperage (A) with dual input -->
+            <div class="field-group">
+              <div class="field-label">
+                <span>Consumo de Corriente (Amperes)</span>
+                <span id="amps-display-badge" style="font-weight: 700; color: var(--racing-orange);">38 A</span>
+              </div>
+              <div class="dual-input-row">
+                <input type="range" id="amps-slider" class="field-range" min="0" max="140" step="1" value="38" oninput="syncAmpsFromSlider(this.value)">
+                <input type="number" id="amps-input" class="field-input" min="0" max="200" step="0.5" value="38" oninput="syncAmpsFromNumber(this.value)">
+              </div>
+            </div>
+
+            <!-- Lap Register Button -->
+            <button type="button" class="btn btn-success" id="btn-register-lap" onclick="registerLapNow()" style="height: 48px; font-size: 1rem;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              Capturar / Registrar Vuelta
+            </button>
+
+            <!-- Test Lap Quick-Add (Demo simulator) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: var(--space-xs); border-top: var(--rule);">
+              <span style="font-size: 0.75rem; color: var(--on-surface-variant);">Simulación rápida de prueba:</span>
+              <button type="button" class="btn btn-ghost" onclick="simulateTestLap()" style="height: 28px; font-size: 0.75rem; padding: 0 var(--space-sm);">
+                + Simular Vuelta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column B: Telemetry Charts & Laps History Table -->
+        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+
+          <!-- Comparative Telemetry Charts -->
+          <div class="charts-grid">
+            <!-- Chart 1: Lap Speed Profile -->
+            <div class="chart-box">
+              <div class="card-header">
+                <h3 class="card-title">Perfil de Velocidad por Vuelta</h3>
+                <span style="font-family: var(--font-label); font-size: 0.75rem; color: var(--on-surface-variant);">km/h vs Vuelta</span>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-speed"></canvas>
+              </div>
+            </div>
+
+            <!-- Chart 2: Energy & Amperage Profile -->
+            <div class="chart-box">
+              <div class="card-header">
+                <h3 class="card-title">Consumo de Corriente y Energía</h3>
+                <span style="font-family: var(--font-label); font-size: 0.75rem; color: var(--on-surface-variant);">Amperes y Ah acum.</span>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-energy"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Laps History Table -->
+          <div class="card">
+            <div class="card-header">
+              <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                <h3 class="card-title">Historial de Vueltas</h3>
+                <span class="badge-tag" id="table-lap-badge">0 vueltas</span>
+              </div>
+              <div style="display: flex; gap: var(--space-xs);">
+                <button type="button" class="btn btn-ghost" onclick="clearAllLaps()" style="height: 32px; font-size: 0.75rem;">
+                  Limpiar Tabla
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container" style="max-height: 360px; overflow-y: auto;">
+              <table id="laps-table">
+                <thead>
+                  <tr>
+                    <th># Vuelta</th>
+                    <th>Hora Registro</th>
+                    <th>Lap Split</th>
+                    <th>Vel. Inst. (km/h)</th>
+                    <th>Vel. Prom. (km/h)</th>
+                    <th>Corriente (A)</th>
+                    <th>Consumo Vuelta (Ah)</th>
+                    <th>Ah Acumulados</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="laps-table-body">
+                  <tr id="empty-table-row">
+                    <td colspan="9" style="text-align: center; color: var(--on-surface-muted); padding: var(--space-lg);">
+                      No se han registrado vueltas aún. Presiona "Iniciar Carrera" y "Capturar Vuelta" para comenzar el registro en tiempo real.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- ======================================================================
+         TAB 2: CHECKLIST DE SEGURIDAD Y PRUEBA DE EXTRACCIÓN (20s)
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-safety" role="tabpanel">
+
+      <!-- Safety Progress Summary -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Estado de Inspección y Seguridad Pre-Carrera</h2>
+          <span class="badge-tag" id="safety-progress-text">0 / 14 Verificados (0%)</span>
+        </div>
+        <div class="checklist-progress-bar">
+          <div class="checklist-progress-fill" id="safety-progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- 2-Column Grid: Extraction Test Stopwatch + Safety Checklists -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: var(--space-md);">
+
+        <!-- Pilot Emergency Extraction Test Box (Reglamentaria 20s) -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Prueba de Extracción de Emergencia del Piloto</h3>
+            <span class="badge-tag" style="background-color: var(--racing-amber); color: #000;">Límite: 20.0s</span>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--on-surface-variant); margin: 0;">
+            <strong>Reglamento Oficial Electratón:</strong> El piloto debe estar debidamente fajado con arnés de 5/6 puntos, correas de brazos (arm restraints) y volante colocado. A la orden del oficial, debe apagar el switch general, soltar arnés y abandonar totalmente el habitáculo en <strong>menos de 20 segundos</strong>.
+          </p>
+
+          <!-- Digital Stopwatch -->
+          <div class="extraction-box">
+            <span class="stopwatch-digits" id="extraction-timer-display">00.00</span>
+            <div class="stopwatch-status-banner status-idle" id="extraction-status-banner">
+              Listo para Iniciar Prueba
+            </div>
+            <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; justify-content: center;">
+              <button type="button" class="btn btn-primary" id="btn-ext-start" onclick="startExtractionTimer()">
+                Iniciar Cronómetro
+              </button>
+              <button type="button" class="btn btn-danger" id="btn-ext-stop" onclick="stopExtractionTimer()" disabled>
+                Detener
+              </button>
+              <button type="button" class="btn btn-ghost" id="btn-ext-reset" onclick="resetExtractionTimer()">
+                Reiniciar
+              </button>
+              <button type="button" class="btn btn-success" id="btn-ext-log" onclick="logExtractionAttempt()" disabled>
+                Registrar Intento
+              </button>
+            </div>
+          </div>
+
+          <!-- Extraction Log Table -->
+          <div style="border-top: var(--rule); padding-top: var(--space-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
+              <span style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Registro de Intentos de Extracción</span>
+              <button type="button" class="btn btn-ghost" onclick="clearExtractionLogs()" style="height: 24px; font-size: 0.7rem; padding: 0 var(--space-xs);">Limpiar</button>
+            </div>
+            <div class="table-container" style="max-height: 180px; overflow-y: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Intento</th>
+                    <th>Tiempo</th>
+                    <th>Dictamen</th>
+                    <th>Hora</th>
+                  </tr>
+                </thead>
+                <tbody id="extraction-log-body">
+                  <tr><td colspan="4" style="text-align: center; color: var(--on-surface-muted);">Sin intentos registrados.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Driver & Vehicle Safety Checklist -->
+        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+
+          <!-- Group A: Equipo Personal del Piloto -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">A. Indumentaria y Equipo Personal del Piloto</h3>
+              <span class="badge-tag">Reglamento Oficial</span>
+            </div>
+            <div class="check-list-group" id="group-pilot-gear">
+              <!-- Item 1 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-calzado" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Calzado de seguridad para competencia</span>
+                  <span class="check-desc">Zapatos cerrados de piel o bota automotriz ignífuga, con suela delgada antiderrapante.</span>
+                </div>
+              </label>
+              <!-- Item 2 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-overol" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Overol de piloto reglamentario</span>
+                  <span class="check-desc">Overol de algodón de alta densidad o nomex de 1 o 2 piezas con ajuste en muñecas y tobillos.</span>
+                </div>
+              </label>
+              <!-- Item 3 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-collarin" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Collarín cervical de protección</span>
+                  <span class="check-desc">Soporte cervical rígido o de espuma de alta densidad homologado para karting/monoplaza.</span>
+                </div>
+              </label>
+              <!-- Item 4 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-guantes" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Guantes de carreras completos</span>
+                  <span class="check-desc">Guantes cerrados sin dedos descubiertos, con grip adecuado para el volante.</span>
+                </div>
+              </label>
+              <!-- Item 5 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-casco" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Casco certificado cerrado (DOT / Snell / ECE)</span>
+                  <span class="check-desc">Casco integral con mica transparente sin fracturas y broche micrométrico o doble D ajustado.</span>
+                </div>
+              </label>
+              <!-- Item 6 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-arm-restraints" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Correas para brazos (Arm Restraints)</span>
+                  <span class="check-desc">Obligatorias para habitáculo abierto. Evitan que los brazos salgan del roll-bar en caso de volcadura.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Group B: Inspección Técnica del Monoplaza Fenix #137 -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">B. Inspección Técnica del Vehículo y Pits</h3>
+              <span class="badge-tag">Escrutinio Técnico</span>
+            </div>
+            <div class="check-list-group" id="group-car-tech">
+              <!-- Item 7 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-extintor-auto" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Extintor reglamentario a bordo</span>
+                  <span class="check-desc">Tipo ABC o CO2 (mínimo 1 kg), manómetro en zona verde, fijación metálica de extracción rápida.</span>
+                </div>
+              </label>
+              <!-- Item 8 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-killswitch-ext" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Kill Switch exterior con símbolo visible</span>
+                  <span class="check-desc">Interruptor de corte general exterior rotulado con triángulo azul y rayo reglamentario.</span>
+                </div>
+              </label>
+              <!-- Item 9 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-killswitch-int" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Kill Switch interior al alcance del piloto</span>
+                  <span class="check-desc">Operable con guantes y arnés abrochado sin necesidad de desacomodarse del asiento.</span>
+                </div>
+              </label>
+              <!-- Item 10 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-baterias" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Fijación, pesaje y caja estanca de baterías</span>
+                  <span class="check-desc">Baterías selladas AGM/Gel reglamentarias, anclaje que soporte impacto 20G y aislamiento de terminales.</span>
+                </div>
+              </label>
+              <!-- Item 11 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-aforo-rollbar" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Aforo de piloto y claro del Roll-bar (5 cm)</span>
+                  <span class="check-desc">Mínimo 5 cm de distancia entre el casco del piloto y la línea imaginaria de los arcos antivuelco.</span>
+                </div>
+              </label>
+              <!-- Item 12 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-cinturon" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Arnés de seguridad de 5 o 6 puntos anclado al chasis</span>
+                  <span class="check-desc">Fijación con tornillos grado 8 o superior con placas de refuerzo estructural en chasis.</span>
+                </div>
+              </label>
+              <!-- Item 13 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-frenos" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Sistema de frenado hidráulico independiente</span>
+                  <span class="check-desc">Presión firme de pedal, sin fugas de líquido y prueba de frenado estático aprobada.</span>
+                </div>
+              </label>
+              <!-- Item 14 -->
+              <label class="check-item">
+                <input type="checkbox" id="chk-extintor-pits" onchange="updateSafetyCheckState()">
+                <div class="check-text-group">
+                  <span class="check-title">Equipo de seguridad de pits (Extintor 4.5kg + Botiquín)</span>
+                  <span class="check-desc">Extintor de polvo químico seco o CO2 en la carpa de pits listo para respuesta inmediata.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================================
+         TAB 3: INVENTARIO DE HERRAMIENTAS Y EQUIPO DE PITS
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-inventory" role="tabpanel">
+
+      <!-- Tools Readiness Meter Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Inventario de Herramientas y Refacciones en Paddock</h2>
+          <span class="badge-tag" id="inventory-summary-tag">0 / 0 Listos</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--on-surface-variant); margin: 0;">
+          Supervisión en tiempo real del equipo de soporte mecánico y eléctrico para la carrera de la Escudería Correcaminos #137.
+        </p>
+      </div>
+
+      <!-- Inventory Add & Filter Row -->
+      <div class="card" style="padding: var(--space-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm);">
+          <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+            <button type="button" class="btn btn-ghost" onclick="filterInventory('ALL')">Todos</button>
+            <button type="button" class="btn btn-ghost" onclick="filterInventory('PITS')">En Pits</button>
+            <button type="button" class="btn btn-ghost" onclick="filterInventory('AUTO')">En Auto</button>
+            <button type="button" class="btn btn-ghost" onclick="filterInventory('PENDIENTE')">Faltantes</button>
+          </div>
+
+          <div style="display: flex; gap: var(--space-xs);">
+            <button type="button" class="btn btn-primary" onclick="showAddToolForm()">
+              + Agregar Herramienta
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline Add Tool Form (Hidden by default) -->
+        <div id="add-tool-form-box" style="display: none; border-top: var(--rule); margin-top: var(--space-sm); padding-top: var(--space-sm);">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) 120px; gap: var(--space-sm); align-items: end;">
+            <div class="field-group">
+              <label class="field-label" for="new-tool-name">Nombre / Descripción</label>
+              <input type="text" id="new-tool-name" class="field-input" placeholder="p.ej. Pinzas de presión">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="new-tool-cat">Categoría</label>
+              <select id="new-tool-cat" class="field-select">
+                <option value="Eléctrico">Eléctrico / Medición</option>
+                <option value="Mecánico">Mecánico / Herramienta</option>
+                <option value="Seguridad">Seguridad / Pits</option>
+                <option value="Neumáticos">Neumáticos / Chasis</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="new-tool-status">Estado</label>
+              <select id="new-tool-status" class="field-select">
+                <option value="En Pits">En Pits (Listo)</option>
+                <option value="En Auto">A Bordo (Auto)</option>
+                <option value="Faltante">Faltante</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: var(--space-xs);">
+              <button type="button" class="btn btn-success" onclick="saveNewToolItem()" style="height: 40px;">Guardar</button>
+              <button type="button" class="btn btn-ghost" onclick="hideAddToolForm()" style="height: 40px;">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Table -->
+      <div class="card" style="padding: 0;">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Herramienta / Equipo</th>
+                <th>Categoría</th>
+                <th>Ubicación / Asignación</th>
+                <th>Estado Actual</th>
+                <th>Acción Rápida</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================================
+         TAB 4: FICHA TÉCNICA Y REGLAMENTO ELECTRATÓN 2026
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-specs" role="tabpanel">
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: var(--space-md);">
+
+        <!-- Ficha Técnica Fenix #137 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Ficha Técnica: Monoplaza Fenix #137</h2>
+            <span class="badge-tag">UPPE Racing</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <div class="paddock-item">
+              <span class="paddock-label">Escudería & Universidad</span>
+              <span class="paddock-val">Escudería Correcaminos — Univ. Politécnica de Pénjamo</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Tren Motriz Eléctrico</span>
+              <span class="paddock-val">Motor Brushless DC sincrónico de alta eficiencia</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Banco de Baterías</span>
+              <span class="paddock-val">4x Baterías Selladas AGM 12V (48V nominales) bajo reglamento</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Chasis & Estructura</span>
+              <span class="paddock-val">Multitubular de acero al cromo-molibdeno con doble Roll-Bar</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Carrocería & Aerodinámica</span>
+              <span class="paddock-val">Monocasco aligerado de fibra de vidrio de bajo coeficiente Cd</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Sistema de Frenos</span>
+              <span class="paddock-val">Frenos de disco hidráulicos en ruedas traseras y delanteras</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Desarrollo Tecnológico & Patrocinio</span>
+              <span class="paddock-val">HYADI LAB (Innovación e Ingeniería Sostenible)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extractos Reglamento Electratón 2026 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Campeonato Electratón MX 2026</h2>
+            <span class="badge-tag">Convocatoria Oficial</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm); font-size: 0.875rem;">
+            <p style="margin: 0;">
+              <strong>Objetivo del Campeonato:</strong> Conceptualizar, diseñar, construir y competir con un vehículo monoplaza tripulado tipo Electratón de propulsión eléctrica en base al reglamento vigente, promoviendo la divulgación de ciencia y tecnología (S.T.E.M.).
+            </p>
+            <div class="paddock-item">
+              <span class="paddock-label">Categorías Oficiales</span>
+              <span class="paddock-val">Racer (Nacional) y America (Binacional con Electrathon America)</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Calendario Previsto 2026</span>
+              <span class="paddock-val">Mayo: Escrutinio Técnico. Jun-Nov: Toluca, Cuautla, Querétaro, GDL y MTY.</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Exhibición Internacional</span>
+              <span class="paddock-val">Enero 2027 con FIA Formula E en el Mexico City ePrix</span>
+            </div>
+            <div class="paddock-item">
+              <span class="paddock-label">Escrutinio Dinámico Obligatorio</span>
+              <span class="paddock-val">Prueba de Slalom, Prueba de Frenado y Maniobrabilidad en pista</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- NotebookLM API Shim element (must be right before script) -->
+  <api-shim></api-shim>
+
+  <script>
+    /* ==========================================================================
+       SVG VECTOR FALLBACK DATA URIS (Instant offline / CSP compliant logos)
+       ========================================================================== */
+    // SVG 1: Escudería Correcaminos #137 (Light Theme)
+    const SVG_LOGO_CORRECAMINOS_LIGHT = `data:image/svg+xml;utf8,` + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" width="280" height="80">
+        <rect width="280" height="80" fill="#ffffff" rx="4"/>
+        <path d="M12 55 L35 15 L50 35 L75 10 L58 55 Z" fill="#ff832b"/>
+        <path d="M40 38 L65 18 L60 38 L85 22 L55 65 Z" fill="#0f62fe"/>
+        <circle cx="68" cy="22" r="3.5" fill="#ffffff"/>
+        <text x="92" y="32" font-family="'IBM Plex Sans', sans-serif" font-size="20" font-weight="900" fill="#161616" letter-spacing="1">CORRECAMINOS</text>
+        <text x="94" y="52" font-family="'IBM Plex Mono', monospace" font-size="14" font-weight="700" fill="#0f62fe">#137 RACING TEAM</text>
+        <text x="94" y="68" font-family="'IBM Plex Sans', sans-serif" font-size="10" font-weight="600" fill="#525252">UPPE • FENIX EV</text>
+      </svg>`
+    );
+
+    // SVG 2: Escudería Correcaminos #137 (Dark Theme BL)
+    const SVG_LOGO_CORRECAMINOS_DARK = `data:image/svg+xml;utf8,` + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" width="280" height="80">
+        <rect width="280" height="80" fill="#262626" rx="4"/>
+        <path d="M12 55 L35 15 L50 35 L75 10 L58 55 Z" fill="#ff832b"/>
+        <path d="M40 38 L65 18 L60 38 L85 22 L55 65 Z" fill="#78a9ff"/>
+        <circle cx="68" cy="22" r="3.5" fill="#ffffff"/>
+        <text x="92" y="32" font-family="'IBM Plex Sans', sans-serif" font-size="20" font-weight="900" fill="#ffffff" letter-spacing="1">CORRECAMINOS</text>
+        <text x="94" y="52" font-family="'IBM Plex Mono', monospace" font-size="14" font-weight="700" fill="#78a9ff">#137 RACING TEAM</text>
+        <text x="94" y="68" font-family="'IBM Plex Sans', sans-serif" font-size="10" font-weight="600" fill="#a8a8a8">UPPE • FENIX EV</text>
+      </svg>`
+    );
+
+    // SVG 3: UPPE Logo (Universidad Politécnica de Pénjamo)
+    const SVG_LOGO_UPPE = `data:image/svg+xml;utf8,` + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+        <rect width="240" height="80" fill="#ffffff" rx="4"/>
+        <path d="M15 15 H55 V48 C55 62 35 68 35 68 C35 68 15 62 15 48 Z" fill="#005d5d"/>
+        <path d="M22 22 H48 V46 C48 56 35 61 35 61 C35 61 22 56 22 46 Z" fill="#ffffff"/>
+        <circle cx="35" cy="40" r="10" fill="none" stroke="#f1c21b" stroke-width="3"/>
+        <text x="35" y="44" font-family="'IBM Plex Sans', sans-serif" font-size="11" font-weight="900" fill="#005d5d" text-anchor="middle">UP</text>
+        <text x="65" y="32" font-family="'IBM Plex Sans', sans-serif" font-size="16" font-weight="800" fill="#005d5d">UPPE</text>
+        <text x="65" y="47" font-family="'IBM Plex Sans', sans-serif" font-size="9.5" font-weight="700" fill="#161616">UNIVERSIDAD POLITÉCNICA</text>
+        <text x="65" y="60" font-family="'IBM Plex Sans', sans-serif" font-size="9.5" font-weight="700" fill="#525252">DE PÉNJAMO</text>
+      </svg>`
+    );
+
+    // SVG 4: HYADI LAB Logo
+    const SVG_LOGO_HYADI = `data:image/svg+xml;utf8,` + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+        <rect width="240" height="80" fill="#ffffff" rx="4"/>
+        <circle cx="35" cy="40" r="22" fill="#161616"/>
+        <circle cx="35" cy="40" r="14" fill="#ff832b"/>
+        <circle cx="35" cy="40" r="7" fill="#ffffff"/>
+        <line x1="35" y1="12" x2="35" y2="17" stroke="#ffffff" stroke-width="2.5"/>
+        <line x1="35" y1="63" x2="35" y2="68" stroke="#ffffff" stroke-width="2.5"/>
+        <line x1="12" y1="40" x2="17" y2="40" stroke="#ffffff" stroke-width="2.5"/>
+        <line x1="53" y1="40" x2="58" y2="40" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="68" y="36" font-family="'IBM Plex Sans', sans-serif" font-size="17" font-weight="800" fill="#161616" letter-spacing="0.5">HYADI LAB</text>
+        <text x="69" y="52" font-family="'IBM Plex Mono', monospace" font-size="9" font-weight="700" fill="#ff832b">DESARROLLO & PATROCINIO</text>
+        <text x="69" y="66" font-family="'IBM Plex Sans', sans-serif" font-size="8.5" font-weight="600" fill="#525252">INNOVACIÓN SOSTENIBLE</text>
+      </svg>`
+    );
+
+    // Requested GitHub image URLs
+    const URL_CORRECAMINOS_LIGHT = `https://github.com/evalicea/escuderia_correcaminos/blob/main/logos/Correcaminos_137.png?raw=true`;
+    const URL_CORRECAMINOS_DARK = `https://github.com/evalicea/escuderia_correcaminos/blob/main/logos/Correcaminos_137_BL.png?raw=true`;
+    const URL_UPPE = `https://github.com/evalicea/bioquimica_uppe/blob/main/logo_uppe.jpg?raw=true`;
+    const URL_HYADI = `https://github.com/evalicea/escuderia_correcaminos/blob/main/logos/Hyadi%20Lab.jpeg?raw=true`;
+
+    /* ==========================================================================
+       APPLICATION STATE
+       ========================================================================== */
+    let appState = {
+      theme: 'light',
+      race: {
+        active: false,
+        startTime: null,
+        elapsedMs: 0,
+        startClockString: 'No iniciado'
+      },
+      currentLapNum: 1,
+      laps: [],
+      safetyChecks: {},
+      extractionLogs: [],
+      inventory: [
+        { id: 1, name: `Multímetro digital calibrado`, cat: `Eléctrico`, loc: `Caja Diagnóstico Pits`, status: `En Pits` },
+        { id: 2, name: `Torquímetro dinamométrico 3/8"`, cat: `Mecánico`, loc: `Mesa Pits`, status: `En Pits` },
+        { id: 3, name: `Juego de llaves Allen y milimétricas`, cat: `Mecánico`, loc: `Maletín Herramienta`, status: `En Pits` },
+        { id: 4, name: `Manómetro digital de presión para neumáticos`, cat: `Neumáticos`, loc: `Bolsa Presión`, status: `En Pits` },
+        { id: 5, name: `Cargador de baterías inteligente 48V AGM`, cat: `Eléctrico`, loc: `Zona Carga Pits`, status: `En Pits` },
+        { id: 6, name: `Banco de baterías de reemplazo selladas 12V AGM (x4)`, cat: `Eléctrico`, loc: `Rack Baterías`, status: `En Pits` },
+        { id: 7, name: `Gato rápido de levante para monoplaza`, cat: `Mecánico`, loc: `Línea de Pits`, status: `En Pits` },
+        { id: 8, name: `Radiocomunicadores VHF con diadema (Pits y Piloto)`, cat: `Eléctrico`, loc: `Mesa Telemetría`, status: `En Pits` },
+        { id: 9, name: `Extintor a bordo tipo ABC 1kg`, cat: `Seguridad`, loc: `Habitáculo Fenix`, status: `En Auto` },
+        { id: 10, name: `Extintor de Pits 4.5kg ABC con soporte`, cat: `Seguridad`, loc: `Entrada Paddock`, status: `En Pits` },
+        { id: 11, name: `Botiquín de primeros auxilios reglamentario`, cat: `Seguridad`, loc: `Carpa Principal`, status: `En Pits` },
+        { id: 12, name: `Fusibles de alta corriente 150A y conectores Anderson`, cat: `Eléctrico`, loc: `Caja Refacciones`, status: `En Pits` }
+      ]
+    };
+
+    /* Chart instances */
+    let chartSpeedInstance = null;
+    let chartEnergyInstance = null;
+
+    /* Timers */
+    let raceInterval = null;
+    let extractionInterval = null;
+    let extractionStartMs = 0;
+    let extractionElapsedMs = 0;
+    let extractionRunning = false;
+
+    /* ==========================================================================
+       INITIALIZATION & THEME ENGINE
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', async () => {
+      initPaddockClock();
+      await restoreAppState();
+      applyTheme(appState.theme);
+      initCharts();
+      renderLapsTable();
+      updateKPISummaries();
+      renderInventoryTable();
+      updateSafetyProgress();
+
+      // Notify Gemini Notebook Shim that application is ready
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    });
+
+    function initPaddockClock() {
+      setInterval(() => {
+        const el = document.getElementById('live-paddock-clock');
+        if (el) {
+          const now = new Date();
+          el.textContent = now.toLocaleTimeString('es-MX', { hour12: false });
+        }
+      }, 1000);
+    }
+
+    function toggleTheme() {
+      const newTheme = appState.theme === 'light' ? 'dark' : 'light';
+      applyTheme(newTheme);
+      saveAppState();
+    }
+
+    function applyTheme(theme) {
+      appState.theme = theme;
+      const htmlEl = document.documentElement;
+      const themeBtnLabel = document.getElementById('theme-btn-label');
+      const themeIcon = document.getElementById('theme-icon');
+
+      if (theme === 'dark') {
+        htmlEl.setAttribute('data-theme', 'dark');
+        if (themeBtnLabel) themeBtnLabel.textContent = 'Modo Claro';
+        if (themeIcon) {
+          themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+        }
+      } else {
+        htmlEl.removeAttribute('data-theme');
+        if (themeBtnLabel) themeBtnLabel.textContent = 'Modo Oscuro';
+        if (themeIcon) {
+          themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+        }
+      }
+
+      // Update image sources with fallbacks
+      loadLogosForTheme(theme);
+
+      // Re-render charts with updated theme colors
+      updateChartsTheme();
+    }
+
+    function loadLogosForTheme(theme) {
+      // 1. Escudería Correcaminos Logo (Dynamic for light vs dark)
+      const imgCorrecaminos = document.getElementById('img-correcaminos');
+      if (imgCorrecaminos) {
+        if (theme === 'dark') {
+          imgCorrecaminos.onerror = () => { imgCorrecaminos.src = SVG_LOGO_CORRECAMINOS_DARK; };
+          imgCorrecaminos.src = URL_CORRECAMINOS_DARK;
+        } else {
+          imgCorrecaminos.onerror = () => { imgCorrecaminos.src = SVG_LOGO_CORRECAMINOS_LIGHT; };
+          imgCorrecaminos.src = URL_CORRECAMINOS_LIGHT;
+        }
+      }
+
+      // 2. UPPE Logo
+      const imgUppe = document.getElementById('img-uppe');
+      if (imgUppe) {
+        imgUppe.onerror = () => { imgUppe.src = SVG_LOGO_UPPE; };
+        imgUppe.src = URL_UPPE;
+      }
+
+      // 3. HYADI LAB Logo
+      const imgHyadi = document.getElementById('img-hyadi');
+      if (imgHyadi) {
+        imgHyadi.onerror = () => { imgHyadi.src = SVG_LOGO_HYADI; };
+        imgHyadi.src = URL_HYADI;
+      }
+    }
+
+    /* ==========================================================================
+       NAVIGATION TABS CONTROLLER
+       ========================================================================== */
+    function switchTab(tabId) {
+      const tabs = ['telemetry', 'safety', 'inventory', 'specs'];
+      tabs.forEach((t) => {
+        const btn = document.getElementById(`tab-${t}-btn`);
+        const panel = document.getElementById(`panel-${t}`);
+        if (btn) btn.classList.toggle('is-active', t === tabId);
+        if (panel) panel.classList.toggle('is-active', t === tabId);
+      });
+
+      if (tabId === 'telemetry') {
+        // Allow canvas recalculation
+        setTimeout(() => {
+          if (chartSpeedInstance) chartSpeedInstance.resize();
+          if (chartEnergyInstance) chartEnergyInstance.resize();
+        }, 50);
+      }
+    }
+
+    /* ==========================================================================
+       RACE CLOCK & MASTER TIMER
+       ========================================================================== */
+    function toggleRaceClock() {
+      const btn = document.getElementById('btn-race-toggle');
+      const tag = document.getElementById('race-status-tag');
+      const info = document.getElementById('race-start-info');
+
+      if (!appState.race.active) {
+        // Start Race
+        appState.race.active = true;
+        if (!appState.race.startTime) {
+          appState.race.startTime = Date.now() - appState.race.elapsedMs;
+          const date = new Date(appState.race.startTime);
+          appState.race.startClockString = date.toLocaleTimeString('es-MX', { hour12: false });
+        } else {
+          appState.race.startTime = Date.now() - appState.race.elapsedMs;
+        }
+
+        if (btn) {
+          btn.textContent = 'Pausar Carrera';
+          btn.className = 'btn btn-secondary';
+        }
+        if (tag) {
+          tag.textContent = 'En Carrera';
+          tag.style.backgroundColor = 'var(--tertiary)';
+          tag.style.color = 'var(--on-tertiary)';
+        }
+        if (info) {
+          info.textContent = `Inicio: ${appState.race.startClockString}`;
+        }
+
+        clearInterval(raceInterval);
+        raceInterval = setInterval(updateRaceClockTick, 100);
+      } else {
+        // Pause Race
+        appState.race.active = false;
+        clearInterval(raceInterval);
+        if (btn) {
+          btn.textContent = 'Reanudar Carrera';
+          btn.className = 'btn btn-primary';
+        }
+        if (tag) {
+          tag.textContent = 'Pausada';
+          tag.style.backgroundColor = 'var(--warning)';
+          tag.style.color = 'var(--on-warning)';
+        }
+      }
+      saveAppState();
+    }
+
+    function updateRaceClockTick() {
+      if (!appState.race.active) return;
+      appState.race.elapsedMs = Date.now() - appState.race.startTime;
+      const display = document.getElementById('race-timer-display');
+      if (display) {
+        display.textContent = formatMsToHms(appState.race.elapsedMs);
+      }
+    }
+
+    function resetRaceClock() {
+      if (confirm('¿Deseas reiniciar el reloj de carrera a 00:00:00? (No borrará el historial de vueltas)')) {
+        clearInterval(raceInterval);
+        appState.race.active = false;
+        appState.race.startTime = null;
+        appState.race.elapsedMs = 0;
+        appState.race.startClockString = 'No iniciado';
+
+        const display = document.getElementById('race-timer-display');
+        const btn = document.getElementById('btn-race-toggle');
+        const tag = document.getElementById('race-status-tag');
+        const info = document.getElementById('race-start-info');
+
+        if (display) display.textContent = '00:00:00.0';
+        if (btn) {
+          btn.textContent = 'Iniciar Carrera';
+          btn.className = 'btn btn-primary';
+        }
+        if (tag) {
+          tag.textContent = 'En Espera';
+          tag.style.backgroundColor = 'var(--surface-container-high)';
+          tag.style.color = 'var(--on-surface)';
+        }
+        if (info) info.textContent = 'Inicio: No iniciado';
+
+        saveAppState();
+      }
+    }
+
+    function formatMsToHms(ms) {
+      if (!ms || ms < 0) ms = 0;
+      const totalSec = Math.floor(ms / 1000);
+      const tenths = Math.floor((ms % 1000) / 100);
+      const hours = Math.floor(totalSec / 3600);
+      const minutes = Math.floor((totalSec % 3600) / 60);
+      const seconds = totalSec % 60;
+
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${tenths}`;
+    }
+
+    function formatMsToMmSsTenths(ms) {
+      if (!ms || ms < 0) ms = 0;
+      const totalSec = Math.floor(ms / 1000);
+      const tenths = Math.floor((ms % 1000) / 100);
+      const minutes = Math.floor(totalSec / 60);
+      const seconds = totalSec % 60;
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${pad(minutes)}:${pad(seconds)}.${tenths}`;
+    }
+
+    /* ==========================================================================
+       DUAL INPUT SYNC (Speed, Voltage, Amps)
+       ========================================================================== */
+    function syncSpeedFromSlider(val) {
+      const input = document.getElementById('speed-input');
+      const badge = document.getElementById('speed-display-badge');
+      if (input) input.value = val;
+      if (badge) badge.textContent = `${val} km/h`;
+    }
+
+    function syncSpeedFromNumber(val) {
+      const slider = document.getElementById('speed-slider');
+      const badge = document.getElementById('speed-display-badge');
+      if (slider) slider.value = val;
+      if (badge) badge.textContent = `${val} km/h`;
+    }
+
+    function syncVoltageFromSlider(val) {
+      const input = document.getElementById('voltage-input');
+      const badge = document.getElementById('voltage-display-badge');
+      if (input) input.value = val;
+      if (badge) badge.textContent = `${parseFloat(val).toFixed(1)} V`;
+    }
+
+    function syncVoltageFromNumber(val) {
+      const slider = document.getElementById('voltage-slider');
+      const badge = document.getElementById('voltage-display-badge');
+      if (slider) slider.value = val;
+      if (badge) badge.textContent = `${parseFloat(val).toFixed(1)} V`;
+    }
+
+    function syncAmpsFromSlider(val) {
+      const input = document.getElementById('amps-input');
+      const badge = document.getElementById('amps-display-badge');
+      if (input) input.value = val;
+      if (badge) badge.textContent = `${val} A`;
+    }
+
+    function syncAmpsFromNumber(val) {
+      const slider = document.getElementById('amps-slider');
+      const badge = document.getElementById('amps-display-badge');
+      if (slider) slider.value = val;
+      if (badge) badge.textContent = `${val} A`;
+    }
+
+    function applyTrackPreset(val) {
+      const input = document.getElementById('track-length-input');
+      if (input) input.value = val;
+    }
+
+    function updateLapCalculationsPreview() {
+      // Recompute on field changes if needed
+    }
+
+    /* ==========================================================================
+       LAP CAPTURE & TELEMETRY REGISTRATION
+       ========================================================================== */
+    function registerLapNow() {
+      // Auto start race clock if not yet started
+      if (!appState.race.active && !appState.race.startTime) {
+        toggleRaceClock();
+      }
+
+      const distanceMeters = parseFloat(document.getElementById('track-length-input')?.value || 1200);
+      const instantSpeed = parseFloat(document.getElementById('speed-input')?.value || 45);
+      const voltage = parseFloat(document.getElementById('voltage-input')?.value || 48.0);
+      const currentAmps = parseFloat(document.getElementById('amps-input')?.value || 38);
+
+      const nowMs = Date.now();
+      const currentRaceElapsed = appState.race.active
+        ? nowMs - appState.race.startTime
+        : appState.race.elapsedMs;
+
+      // Determine split time:
+      let lapTimeMs = 0;
+      if (appState.laps.length === 0) {
+        lapTimeMs = currentRaceElapsed > 1000 ? currentRaceElapsed : 68500; // default initial fallback ~68.5s if clicked immediately
+      } else {
+        const lastTotalElapsed = appState.laps[appState.laps.length - 1].cumulativeMs;
+        lapTimeMs = currentRaceElapsed - lastTotalElapsed;
+        if (lapTimeMs <= 500) {
+          // If rapid click, assign realistic time based on distance & speed
+          lapTimeMs = Math.round((distanceMeters / (instantSpeed / 3.6)) * 1000);
+        }
+      }
+
+      const lapTimeSec = lapTimeMs / 1000;
+      const averageSpeedKmh = Number(((distanceMeters / lapTimeSec) * 3.6).toFixed(1));
+
+      // Electrical energy consumed this lap:
+      // Ah = Current (A) * (seconds / 3600)
+      const lapHours = lapTimeSec / 3600;
+      const lapAh = Number((currentAmps * lapHours).toFixed(3));
+      const lapWh = Number((lapAh * voltage).toFixed(1));
+
+      // Cumulative Ah
+      const prevTotalAh = appState.laps.length > 0
+        ? appState.laps[appState.laps.length - 1].cumulativeAh
+        : 0;
+      const cumulativeAh = Number((prevTotalAh + lapAh).toFixed(3));
+
+      // Cumulative Wh
+      const prevTotalWh = appState.laps.length > 0
+        ? appState.laps[appState.laps.length - 1].cumulativeWh
+        : 0;
+      const cumulativeWh = Number((prevTotalWh + lapWh).toFixed(1));
+
+      const nowTimeStr = new Date().toLocaleTimeString('es-MX', { hour12: false });
+
+      const lapData = {
+        lapNumber: appState.currentLapNum,
+        timestamp: nowTimeStr,
+        lapTimeMs: lapTimeMs,
+        lapTimeStr: formatMsToMmSsTenths(lapTimeMs),
+        distanceM: distanceMeters,
+        instantSpeed: instantSpeed,
+        avgSpeed: averageSpeedKmh,
+        voltage: voltage,
+        currentAmps: currentAmps,
+        lapAh: lapAh,
+        lapWh: lapWh,
+        cumulativeAh: cumulativeAh,
+        cumulativeWh: cumulativeWh,
+        cumulativeMs: currentRaceElapsed
+      };
+
+      appState.laps.push(lapData);
+      appState.currentLapNum += 1;
+
+      // Update UI elements
+      const nextNumEl = document.getElementById('next-lap-number');
+      if (nextNumEl) nextNumEl.textContent = appState.currentLapNum;
+
+      renderLapsTable();
+      updateKPISummaries();
+      updateChartsData();
+      saveAppState();
+    }
+
+    function simulateTestLap() {
+      // Helper function that seeds or simulates realistic telemetry
+      const baseDistance = parseFloat(document.getElementById('track-length-input')?.value || 1200);
+      const lapCount = appState.laps.length + 1;
+
+      // Realistic variation around 48-62 km/h, 30-55A
+      const randomSpeed = Math.round(44 + Math.random() * 18);
+      const randomAmps = Math.round(32 + Math.random() * 20);
+      const randomVoltage = Number((48.2 - (lapCount * 0.08)).toFixed(1));
+
+      document.getElementById('speed-input').value = randomSpeed;
+      syncSpeedFromNumber(randomSpeed);
+      document.getElementById('amps-input').value = randomAmps;
+      syncAmpsFromNumber(randomAmps);
+      document.getElementById('voltage-input').value = randomVoltage;
+      syncVoltageFromNumber(randomVoltage);
+
+      registerLapNow();
+    }
+
+    function deleteLap(index) {
+      if (confirm(`¿Eliminar la vuelta #${appState.laps[index].lapNumber}?`)) {
+        appState.laps.splice(index, 1);
+        // Re-index remaining laps
+        let runningAh = 0;
+        let runningWh = 0;
+        appState.laps.forEach((lap, i) => {
+          lap.lapNumber = i + 1;
+          runningAh += lap.lapAh;
+          runningWh += lap.lapWh;
+          lap.cumulativeAh = Number(runningAh.toFixed(3));
+          lap.cumulativeWh = Number(runningWh.toFixed(1));
+        });
+        appState.currentLapNum = appState.laps.length + 1;
+        const nextNumEl = document.getElementById('next-lap-number');
+        if (nextNumEl) nextNumEl.textContent = appState.currentLapNum;
+
+        renderLapsTable();
+        updateKPISummaries();
+        updateChartsData();
+        saveAppState();
+      }
+    }
+
+    function clearAllLaps() {
+      if (confirm('¿Estás seguro de vaciar todo el historial de telemetría de vueltas?')) {
+        appState.laps = [];
+        appState.currentLapNum = 1;
+        const nextNumEl = document.getElementById('next-lap-number');
+        if (nextNumEl) nextNumEl.textContent = '1';
+
+        renderLapsTable();
+        updateKPISummaries();
+        updateChartsData();
+        saveAppState();
+      }
+    }
+
+    /* ==========================================================================
+       RENDER LAPS TABLE & METRICS
+       ========================================================================== */
+    function renderLapsTable() {
+      const tbody = document.getElementById('laps-table-body');
+      const badge = document.getElementById('table-lap-badge');
+      if (!tbody) return;
+
+      if (badge) {
+        badge.textContent = `${appState.laps.length} vueltas`;
+      }
+
+      if (appState.laps.length === 0) {
+        tbody.innerHTML = `
+          <tr id="empty-table-row">
+            <td colspan="9" style="text-align: center; color: var(--on-surface-muted); padding: var(--space-lg);">
+              No se han registrado vueltas aún. Presiona "Iniciar Carrera" y "Capturar Vuelta" para comenzar el registro en tiempo real.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Find Best Lap index (minimum lapTimeMs)
+      let bestLapIndex = 0;
+      let minLapTime = Infinity;
+      appState.laps.forEach((lap, idx) => {
+        if (lap.lapTimeMs < minLapTime) {
+          minLapTime = lap.lapTimeMs;
+          bestLapIndex = idx;
+        }
+      });
+
+      let rowsHtml = '';
+      appState.laps.slice().reverse().forEach((lap, revIdx) => {
+        const actualIndex = appState.laps.length - 1 - revIdx;
+        const isBest = actualIndex === bestLapIndex && appState.laps.length > 0;
+
+        rowsHtml += `
+          <tr class="${isBest ? 'best-lap-row' : ''}">
+            <td style="font-weight: 700;">
+              ${lap.lapNumber} ${isBest ? '<span title="Mejor Vuelta" style="color: var(--racing-amber);">★ Rápida</span>' : ''}
+            </td>
+            <td>${lap.timestamp}</td>
+            <td style="font-weight: 700; color: var(--primary);">${lap.lapTimeStr}</td>
+            <td>${lap.instantSpeed} km/h</td>
+            <td style="font-weight: 600;">${lap.avgSpeed} km/h</td>
+            <td style="color: var(--racing-orange); font-weight: 600;">${lap.currentAmps} A</td>
+            <td>${lap.lapAh} Ah</td>
+            <td>${lap.cumulativeAh} Ah</td>
+            <td>
+              <button type="button" class="btn btn-ghost" onclick="deleteLap(${actualIndex})" style="height: 26px; padding: 0 var(--space-xs); font-size: 0.75rem; color: var(--error);" title="Eliminar registro">
+                ✕
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rowsHtml;
+    }
+
+    function updateKPISummaries() {
+      const kpiLapCount = document.getElementById('kpi-lap-count');
+      const kpiBestLap = document.getElementById('kpi-best-lap');
+      const kpiBestLapNum = document.getElementById('kpi-best-lap-num');
+      const kpiLastLap = document.getElementById('kpi-last-lap');
+      const kpiLastLapSpeed = document.getElementById('kpi-last-lap-speed');
+      const kpiAvgSpeed = document.getElementById('kpi-avg-speed');
+      const kpiMaxSpeed = document.getElementById('kpi-max-speed');
+      const kpiTotalAh = document.getElementById('kpi-total-ah');
+      const kpiTotalWh = document.getElementById('kpi-total-wh');
+      const kpiTotalDist = document.getElementById('kpi-total-distance');
+
+      const count = appState.laps.length;
+      if (kpiLapCount) kpiLapCount.textContent = count;
+
+      if (count === 0) {
+        if (kpiBestLap) kpiBestLap.textContent = '--:--.-';
+        if (kpiBestLapNum) kpiBestLapNum.textContent = 'Vuelta: --';
+        if (kpiLastLap) kpiLastLap.textContent = '--:--.-';
+        if (kpiLastLapSpeed) kpiLastLapSpeed.textContent = '-- km/h prom.';
+        if (kpiAvgSpeed) kpiAvgSpeed.innerHTML = `0.0 <span class="metric-unit">km/h</span>`;
+        if (kpiMaxSpeed) kpiMaxSpeed.textContent = 'Máx inst: 0 km/h';
+        if (kpiTotalAh) kpiTotalAh.innerHTML = `0.00 <span class="metric-unit">Ah</span>`;
+        if (kpiTotalWh) kpiTotalWh.textContent = '0.0 Wh consumidos';
+        if (kpiTotalDist) kpiTotalDist.innerHTML = `0.00 <span class="metric-unit">km</span>`;
+        return;
+      }
+
+      // Best lap
+      let minTime = Infinity;
+      let bestLapNum = 1;
+      let speedSum = 0;
+      let maxInstantSpeed = 0;
+      let totalMeters = 0;
+
+      appState.laps.forEach((lap) => {
+        if (lap.lapTimeMs < minTime) {
+          minTime = lap.lapTimeMs;
+          bestLapNum = lap.lapNumber;
+        }
+        speedSum += lap.avgSpeed;
+        if (lap.instantSpeed > maxInstantSpeed) maxInstantSpeed = lap.instantSpeed;
+        totalMeters += lap.distanceM;
+      });
+
+      const lastLap = appState.laps[count - 1];
+
+      if (kpiBestLap) kpiBestLap.textContent = formatMsToMmSsTenths(minTime);
+      if (kpiBestLapNum) kpiBestLapNum.textContent = `Vuelta #${bestLapNum}`;
+      if (kpiLastLap) kpiLastLap.textContent = lastLap.lapTimeStr;
+      if (kpiLastLapSpeed) kpiLastLapSpeed.textContent = `${lastLap.avgSpeed} km/h prom.`;
+      if (kpiAvgSpeed) kpiAvgSpeed.innerHTML = `${(speedSum / count).toFixed(1)} <span class="metric-unit">km/h</span>`;
+      if (kpiMaxSpeed) kpiMaxSpeed.textContent = `Máx inst: ${maxInstantSpeed} km/h`;
+      if (kpiTotalAh) kpiTotalAh.innerHTML = `${lastLap.cumulativeAh.toFixed(2)} <span class="metric-unit">Ah</span>`;
+      if (kpiTotalWh) kpiTotalWh.textContent = `${lastLap.cumulativeWh.toFixed(1)} Wh consumidos`;
+      if (kpiTotalDist) kpiTotalDist.innerHTML = `${(totalMeters / 1000).toFixed(2)} <span class="metric-unit">km</span>`;
+    }
+
+    /* ==========================================================================
+       CHART.JS TELEMETRY VISUALIZATIONS
+       ========================================================================== */
+    function getChartThemeColors() {
+      const isDark = appState.theme === 'dark';
+      return {
+        text: isDark ? '#c6c6c6' : '#525252',
+        grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+        primary: isDark ? '#78a9ff' : '#0f62fe',
+        secondary: isDark ? '#ff832b' : '#ff832b',
+        tertiary: isDark ? '#42be65' : '#198038',
+        purple: isDark ? '#be95ff' : '#8a3ffc'
+      };
+    }
+
+    function initCharts() {
+      const ctxSpeed = document.getElementById('chart-speed');
+      const ctxEnergy = document.getElementById('chart-energy');
+      if (!ctxSpeed || !ctxEnergy) return;
+
+      const colors = getChartThemeColors();
+
+      // Chart 1: Speed Profile
+      chartSpeedInstance = new Chart(ctxSpeed, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Vel. Instantánea (km/h)',
+              data: [],
+              borderColor: colors.primary,
+              backgroundColor: colors.primary,
+              borderWidth: 2,
+              tension: 0.15,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              label: 'Vel. Promedio (km/h)',
+              data: [],
+              borderColor: colors.tertiary,
+              backgroundColor: colors.tertiary,
+              borderWidth: 2,
+              borderDash: [4, 4],
+              tension: 0.15,
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.text,
+                font: { family: "'IBM Plex Mono', monospace", size: 11 }
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Vuelta #', color: colors.text },
+              grid: { color: colors.grid },
+              ticks: { color: colors.text, font: { family: "'IBM Plex Mono', monospace" } }
+            },
+            y: {
+              title: { display: true, text: 'km/h', color: colors.text },
+              grid: { color: colors.grid },
+              ticks: { color: colors.text, font: { family: "'IBM Plex Mono', monospace" } },
+              suggestedMin: 0,
+              suggestedMax: 70
+            }
+          }
+        }
+      });
+
+      // Chart 2: Current & Energy Consumption
+      chartEnergyInstance = new Chart(ctxEnergy, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              type: 'bar',
+              label: 'Corriente (A)',
+              data: [],
+              backgroundColor: colors.secondary,
+              borderColor: colors.secondary,
+              yAxisID: 'y'
+            },
+            {
+              type: 'line',
+              label: 'Ah Acumulado',
+              data: [],
+              borderColor: colors.purple,
+              backgroundColor: colors.purple,
+              borderWidth: 2.5,
+              tension: 0.2,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.text,
+                font: { family: "'IBM Plex Mono', monospace", size: 11 }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Vuelta #', color: colors.text },
+              grid: { color: colors.grid },
+              ticks: { color: colors.text, font: { family: "'IBM Plex Mono', monospace" } }
+            },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'Amperes (A)', color: colors.text },
+              grid: { color: colors.grid },
+              ticks: { color: colors.text, font: { family: "'IBM Plex Mono', monospace" } },
+              suggestedMin: 0
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: { display: true, text: 'Ah Acumulados', color: colors.text },
+              grid: { drawOnChartArea: false },
+              ticks: { color: colors.text, font: { family: "'IBM Plex Mono', monospace" } },
+              suggestedMin: 0
+            }
+          }
+        }
+      });
+
+      updateChartsData();
+    }
+
+    function updateChartsData() {
+      if (!chartSpeedInstance || !chartEnergyInstance) return;
+
+      const labels = appState.laps.map((l) => `V${l.lapNumber}`);
+      const instantSpeeds = appState.laps.map((l) => l.instantSpeed);
+      const avgSpeeds = appState.laps.map((l) => l.avgSpeed);
+      const amps = appState.laps.map((l) => l.currentAmps);
+      const cumulativeAhs = appState.laps.map((l) => l.cumulativeAh);
+
+      // Speed chart
+      chartSpeedInstance.data.labels = labels;
+      chartSpeedInstance.data.datasets[0].data = instantSpeeds;
+      chartSpeedInstance.data.datasets[1].data = avgSpeeds;
+      chartSpeedInstance.update();
+
+      // Energy chart
+      chartEnergyInstance.data.labels = labels;
+      chartEnergyInstance.data.datasets[0].data = amps;
+      chartEnergyInstance.data.datasets[1].data = cumulativeAhs;
+      chartEnergyInstance.update();
+    }
+
+    function updateChartsTheme() {
+      if (!chartSpeedInstance || !chartEnergyInstance) return;
+      const colors = getChartThemeColors();
+
+      [chartSpeedInstance, chartEnergyInstance].forEach((chart) => {
+        chart.options.scales.x.grid.color = colors.grid;
+        chart.options.scales.x.ticks.color = colors.text;
+        chart.options.scales.x.title.color = colors.text;
+        if (chart.options.scales.y) {
+          chart.options.scales.y.grid.color = colors.grid;
+          chart.options.scales.y.ticks.color = colors.text;
+          chart.options.scales.y.title.color = colors.text;
+        }
+        if (chart.options.scales.y1) {
+          chart.options.scales.y1.ticks.color = colors.text;
+          chart.options.scales.y1.title.color = colors.text;
+        }
+        chart.options.plugins.legend.labels.color = colors.text;
+      });
+
+      chartSpeedInstance.data.datasets[0].borderColor = colors.primary;
+      chartSpeedInstance.data.datasets[0].backgroundColor = colors.primary;
+      chartSpeedInstance.data.datasets[1].borderColor = colors.tertiary;
+      chartSpeedInstance.data.datasets[1].backgroundColor = colors.tertiary;
+
+      chartEnergyInstance.data.datasets[0].backgroundColor = colors.secondary;
+      chartEnergyInstance.data.datasets[0].borderColor = colors.secondary;
+      chartEnergyInstance.data.datasets[1].borderColor = colors.purple;
+      chartEnergyInstance.data.datasets[1].backgroundColor = colors.purple;
+
+      chartSpeedInstance.update();
+      chartEnergyInstance.update();
+    }
+
+    /* ==========================================================================
+       PILOT EXTRACTION STOPWATCH (20-Second Emergency Limit)
+       ========================================================================== */
+    function startExtractionTimer() {
+      if (extractionRunning) return;
+      extractionRunning = true;
+      extractionStartMs = Date.now() - extractionElapsedMs;
+
+      document.getElementById('btn-ext-start').disabled = true;
+      document.getElementById('btn-ext-stop').disabled = false;
+      document.getElementById('btn-ext-log').disabled = true;
+
+      const banner = document.getElementById('extraction-status-banner');
+      if (banner) {
+        banner.className = 'stopwatch-status-banner';
+        banner.style.backgroundColor = 'var(--surface-container-high)';
+        banner.textContent = 'Cronometrando Extracción... (Límite: 20s)';
+      }
+
+      clearInterval(extractionInterval);
+      extractionInterval = setInterval(updateExtractionTick, 30);
+    }
+
+    function updateExtractionTick() {
+      extractionElapsedMs = Date.now() - extractionStartMs;
+      const totalSec = extractionElapsedMs / 1000;
+      const display = document.getElementById('extraction-timer-display');
+      if (display) {
+        display.textContent = totalSec.toFixed(2);
+      }
+
+      // Visual color shift if passing 20s
+      const banner = document.getElementById('extraction-status-banner');
+      if (banner && totalSec > 20.0) {
+        banner.className = 'stopwatch-status-banner status-fail';
+        banner.textContent = '¡TIEMPO REGLAMENTARIO DE 20.0s EXCEDIDO!';
+      }
+    }
+
+    function stopExtractionTimer() {
+      if (!extractionRunning) return;
+      extractionRunning = false;
+      clearInterval(extractionInterval);
+
+      document.getElementById('btn-ext-start').disabled = false;
+      document.getElementById('btn-ext-stop').disabled = true;
+      document.getElementById('btn-ext-log').disabled = false;
+
+      const finalSec = extractionElapsedMs / 1000;
+      const display = document.getElementById('extraction-timer-display');
+      if (display) display.textContent = finalSec.toFixed(2);
+
+      const banner = document.getElementById('extraction-status-banner');
+      if (banner) {
+        if (finalSec <= 20.0) {
+          banner.className = 'stopwatch-status-banner status-pass';
+          banner.textContent = `✓ APROBADO (${finalSec.toFixed(2)}s ≤ 20.0s Reglamentarios)`;
+        } else {
+          banner.className = 'stopwatch-status-banner status-fail';
+          banner.textContent = `✕ NO APROBADO (${finalSec.toFixed(2)}s > 20.0s Límite Excedido)`;
+        }
+      }
+    }
+
+    function resetExtractionTimer() {
+      extractionRunning = false;
+      clearInterval(extractionInterval);
+      extractionElapsedMs = 0;
+
+      document.getElementById('btn-ext-start').disabled = false;
+      document.getElementById('btn-ext-stop').disabled = true;
+      document.getElementById('btn-ext-log').disabled = true;
+
+      const display = document.getElementById('extraction-timer-display');
+      if (display) display.textContent = '00.00';
+
+      const banner = document.getElementById('extraction-status-banner');
+      if (banner) {
+        banner.className = 'stopwatch-status-banner status-idle';
+        banner.textContent = 'Listo para Iniciar Prueba';
+      }
+    }
+
+    function logExtractionAttempt() {
+      const finalSec = extractionElapsedMs / 1000;
+      if (finalSec <= 0) return;
+
+      const attemptNum = appState.extractionLogs.length + 1;
+      const pass = finalSec <= 20.0;
+      const nowStr = new Date().toLocaleTimeString('es-MX', { hour12: false });
+
+      appState.extractionLogs.push({
+        num: attemptNum,
+        timeSec: finalSec.toFixed(2),
+        pass: pass,
+        timeStr: nowStr
+      });
+
+      renderExtractionLogs();
+      document.getElementById('btn-ext-log').disabled = true;
+      saveAppState();
+    }
+
+    function renderExtractionLogs() {
+      const tbody = document.getElementById('extraction-log-body');
+      if (!tbody) return;
+
+      if (appState.extractionLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--on-surface-muted);">Sin intentos registrados.</td></tr>`;
+        return;
+      }
+
+      let html = '';
+      appState.extractionLogs.slice().reverse().forEach((log) => {
+        html += `
+          <tr>
+            <td style="font-weight: 700;">#${log.num}</td>
+            <td style="font-family: var(--font-label);">${log.timeSec} s</td>
+            <td>
+              <span class="badge-tag" style="background-color: ${log.pass ? 'color-mix(in srgb, var(--tertiary), transparent 80%)' : 'color-mix(in srgb, var(--error), transparent 80%)'}; color: ${log.pass ? 'var(--tertiary)' : 'var(--error)'};">
+                ${log.pass ? 'APROBADO' : 'NO APROBADO'}
+              </span>
+            </td>
+            <td style="color: var(--on-surface-variant); font-size: 0.75rem;">${log.timeStr}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function clearExtractionLogs() {
+      if (confirm('¿Limpiar el historial de pruebas de extracción?')) {
+        appState.extractionLogs = [];
+        renderExtractionLogs();
+        saveAppState();
+      }
+    }
+
+    /* ==========================================================================
+       CHECKLIST DE SEGURIDAD & ESCRUTINIO TÉCNICO
+       ========================================================================== */
+    const CHECKLIST_IDS = [
+      'chk-calzado',
+      'chk-overol',
+      'chk-collarin',
+      'chk-guantes',
+      'chk-casco',
+      'chk-arm-restraints',
+      'chk-extintor-auto',
+      'chk-killswitch-ext',
+      'chk-killswitch-int',
+      'chk-baterias',
+      'chk-aforo-rollbar',
+      'chk-cinturon',
+      'chk-frenos',
+      'chk-extintor-pits'
+    ];
+
+    function updateSafetyCheckState() {
+      CHECKLIST_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          appState.safetyChecks[id] = el.checked;
+        }
+      });
+      updateSafetyProgress();
+      saveAppState();
+    }
+
+    function updateSafetyProgress() {
+      let checkedCount = 0;
+      CHECKLIST_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && el.checked) checkedCount++;
+      });
+
+      const total = CHECKLIST_IDS.length;
+      const pct = Math.round((checkedCount / total) * 100);
+
+      const text = document.getElementById('safety-progress-text');
+      const fill = document.getElementById('safety-progress-fill');
+
+      if (text) text.textContent = `${checkedCount} / ${total} Verificados (${pct}%)`;
+      if (fill) fill.style.width = `${pct}%`;
+    }
+
+    /* ==========================================================================
+       PIT TOOL INVENTORY MODULE
+       ========================================================================== */
+    let currentInventoryFilter = 'ALL';
+
+    function filterInventory(filter) {
+      currentInventoryFilter = filter;
+      renderInventoryTable();
+    }
+
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventory-table-body');
+      const tag = document.getElementById('inventory-summary-tag');
+      if (!tbody) return;
+
+      const items = appState.inventory;
+      const total = items.length;
+      const readyCount = items.filter((i) => i.status === 'En Pits' || i.status === 'En Auto').length;
+
+      if (tag) tag.textContent = `${readyCount} / ${total} Disponibles`;
+
+      let filtered = items;
+      if (currentInventoryFilter === 'PITS') {
+        filtered = items.filter((i) => i.status === 'En Pits');
+      } else if (currentInventoryFilter === 'AUTO') {
+        filtered = items.filter((i) => i.status === 'En Auto');
+      } else if (currentInventoryFilter === 'PENDIENTE') {
+        filtered = items.filter((i) => i.status === 'Faltante');
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--on-surface-muted); padding: var(--space-md);">No hay herramientas bajo este filtro.</td></tr>`;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach((item, index) => {
+        let statusColor = 'var(--primary)';
+        if (item.status === 'En Pits') statusColor = 'var(--tertiary)';
+        if (item.status === 'En Auto') statusColor = 'var(--racing-orange)';
+        if (item.status === 'Faltante') statusColor = 'var(--error)';
+
+        html += `
+          <tr>
+            <td style="font-weight: 600;">${item.name}</td>
+            <td><span class="badge-tag" style="background-color: var(--surface-container-high); color: var(--on-surface);">${item.cat}</span></td>
+            <td style="font-size: 0.8rem; color: var(--on-surface-variant);">${item.loc}</td>
+            <td>
+              <span class="badge-tag" style="background-color: color-mix(in srgb, ${statusColor}, transparent 80%); color: ${statusColor}; border: 1px solid ${statusColor};">
+                ${item.status}
+              </span>
+            </td>
+            <td>
+              <select class="field-select" style="height: 30px; font-size: 0.75rem; padding: 0 var(--space-xs);" onchange="changeToolStatus(${item.id}, this.value)">
+                <option value="En Pits" ${item.status === 'En Pits' ? 'selected' : ''}>En Pits</option>
+                <option value="En Auto" ${item.status === 'En Auto' ? 'selected' : ''}>En Auto</option>
+                <option value="Faltante" ${item.status === 'Faltante' ? 'selected' : ''}>Faltante</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="btn btn-ghost" onclick="removeToolItem(${item.id})" style="height: 26px; font-size: 0.75rem; color: var(--error);" title="Eliminar herramienta">
+                ✕
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function changeToolStatus(toolId, newStatus) {
+      const tool = appState.inventory.find((t) => t.id === toolId);
+      if (tool) {
+        tool.status = newStatus;
+        renderInventoryTable();
+        saveAppState();
+      }
+    }
+
+    function removeToolItem(toolId) {
+      if (confirm('¿Eliminar esta herramienta del inventario?')) {
+        appState.inventory = appState.inventory.filter((t) => t.id !== toolId);
+        renderInventoryTable();
+        saveAppState();
+      }
+    }
+
+    function showAddToolForm() {
+      const box = document.getElementById('add-tool-form-box');
+      if (box) box.style.display = 'block';
+    }
+
+    function hideAddToolForm() {
+      const box = document.getElementById('add-tool-form-box');
+      if (box) box.style.display = 'none';
+    }
+
+    function saveNewToolItem() {
+      const nameInput = document.getElementById('new-tool-name');
+      const catSelect = document.getElementById('new-tool-cat');
+      const statusSelect = document.getElementById('new-tool-status');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const cat = catSelect ? catSelect.value : 'Mecánico';
+      const status = statusSelect ? statusSelect.value : 'En Pits';
+
+      if (!name) {
+        alert('Por favor escribe el nombre de la herramienta.');
+        return;
+      }
+
+      const newId = Date.now();
+      appState.inventory.push({
+        id: newId,
+        name: name,
+        cat: cat,
+        loc: 'Paddock UPPE',
+        status: status
+      });
+
+      if (nameInput) nameInput.value = '';
+      hideAddToolForm();
+      renderInventoryTable();
+      saveAppState();
+    }
+
+    /* ==========================================================================
+       DATA EXPORT (CSV via NotebookLM Shim API)
+       ========================================================================== */
+    function exportTelemetryCSV() {
+      if (appState.laps.length === 0) {
+        alert('No hay datos de telemetría de vueltas registrados para exportar.');
+        return;
+      }
+
+      let csv = `Vuelta,Hora_Registro,Tiempo_Vuelta_ms,Tiempo_Vuelta_Formato,Distancia_m,Vel_Instantanea_kmh,Vel_Promedio_kmh,Voltaje_V,Corriente_A,Energia_Lap_Ah,Energia_Lap_Wh,Energia_Acum_Ah,Energia_Acum_Wh\n`;
+
+      appState.laps.forEach((l) => {
+        csv += `${l.lapNumber},"${l.timestamp}",${l.lapTimeMs},"${l.lapTimeStr}",${l.distanceM},${l.instantSpeed},${l.avgSpeed},${l.voltage},${l.currentAmps},${l.lapAh},${l.lapWh},${l.cumulativeAh},${l.cumulativeWh}\n`;
+      });
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+        window.notebookAppApi.triggerFileDownload({
+          content: csv,
+          contentType: 'text/csv',
+          encoding: 'UTF-8',
+          filename: `Telemetria_Correcaminos_137_${Date.now()}.csv`
+        });
+      } else {
+        // Fallback for standalone browser testing
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Telemetria_Correcaminos_137_${Date.now()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    /* ==========================================================================
+       STATE PERSISTENCE (NotebookLM Shim API)
+       ========================================================================== */
+    async function saveAppState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+        try {
+          await window.notebookAppApi.setAppState(appState);
+        } catch (err) {
+          console.warn('Error guardando estado con notebookAppApi:', err);
+        }
+      }
+    }
+
+    async function restoreAppState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            if (saved.theme) appState.theme = saved.theme;
+            if (saved.race) appState.race = saved.race;
+            if (Array.isArray(saved.laps)) appState.laps = saved.laps;
+            if (saved.currentLapNum) appState.currentLapNum = saved.currentLapNum;
+            if (saved.safetyChecks) {
+              appState.safetyChecks = saved.safetyChecks;
+              Object.keys(saved.safetyChecks).forEach((chkId) => {
+                const el = document.getElementById(chkId);
+                if (el) el.checked = Boolean(saved.safetyChecks[chkId]);
+              });
+            }
+            if (Array.isArray(saved.extractionLogs)) {
+              appState.extractionLogs = saved.extractionLogs;
+              renderExtractionLogs();
+            }
+            if (Array.isArray(saved.inventory)) {
+              appState.inventory = saved.inventory;
+            }
+          }
+        } catch (err) {
+          console.warn('Error recuperando estado con notebookAppApi:', err);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
